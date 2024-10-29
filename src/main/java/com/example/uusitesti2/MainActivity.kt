@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,17 +36,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-
-//import com.example.uusitesti2.ui.theme.Shapes
-/*
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-import com.google.android.exoplayer2.ui.StyledPlayerView
-*/
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.ui.graphics.vector.ImageVector
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,82 +55,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 )
-                // MyApp(modifier = Modifier.fillMaxSize())
                 {
-                    Login(getVideoUri())
+                    LoginScreen()
                 }
             }
         }
     }
-    private fun getVideoUri(): Uri {
-        val rawId = resources.getIdentifier("clouds", "raw", packageName)
-        val videoUri = "android.resource://$packageName/$rawId"
-        return Uri.parse(videoUri)
-    }
 }
-
-private fun Context.doLogin() {
-    Toast.makeText(
-        this,
-        "Something went wrong, try again later!",
-        Toast.LENGTH_SHORT
-    ).show()
-}
-
-/*
-private fun Context.buildExoPlayer(uri: Uri) =
-    ExoPlayer.Builder(this).build().apply {
-        setMediaItem(MediaItem.fromUri(uri))
-        repeatMode = Player.REPEAT_MODE_ALL
-        playWhenReady = true
-        prepare()
-    }
-
-private fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
-    StyledPlayerView(this).apply {
-        player = exoPlayer
-        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-        useController = false
-        resizeMode = RESIZE_MODE_ZOOM
-    }
- */
 
 
 @Composable
-fun Login(videoUri: Uri) {
-    //val context = localContext.current
-    val passwordFocusRequester = FocusRequester()
-    //val focusManager = LocalFocusManager.current
-    //val exoPlayer = remember { context.buildExoPlayer(videoUri) }
-
-    /*
-    var heightInput: String by remember { mutableStateOf("")}
-    var weightInput: String by remember { mutableStateOf("")}
-    val height = heightInput.toFloatOrNull() ?: 0.0f
-    val weight = weightInput.toIntOrNull() ?: 0
-     */
-
-    /*
-    DisposableEffect(
-        AndroidView(
-            factory = { it.buildPlayerView(exoPlayer) },
-            modifier = Modifier.fillMaxSize()
-        )
-    ) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
-    ProvideWindowInsets {
-    }
-    */
-
+fun LoginScreen(modifier: Modifier = Modifier) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     Column(
-        modifier = Modifier.padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-) {
-    Text(
+        modifier = modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
         text = "Login",
         fontSize = 24.sp,
         color = MaterialTheme.colorScheme.primary,
@@ -141,25 +82,71 @@ fun Login(videoUri: Uri) {
         modifier = Modifier.fillMaxWidth().padding(top =16.dp, bottom=16.dp)
     )
         OutlinedTextField(
-        value = TextInput,
-        //onValueChange = {TextInput = it.replace(',', ',')},
-        label = {Text("Username")},
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        modifier = Modifier.fillMaxWidth()
-    )
+            value = username,
+            onValueChange = {username = it},
+            label = {Text("Username")},
+            singleLine = true,
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Person, contentDescription = "Username Icon")
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
         OutlinedTextField(
-        value = TextInput,
-        //onValueChange = {weightInput = it.replace(',', ',')},
-        label = {Text("Password")},
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        modifier = Modifier.fillMaxWidth()
-    )
+            value = password,
+            onValueChange = {password = it},
+            label = {Text("Password")},
+            singleLine = true,
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Lock, contentDescription = "Password Icon")
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done
+            ),
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp)
+        )
+        Button(
+            onClick = {
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp), // Add some space below the button
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        ) {
+            Text(text = "Submit")
+        }
+    }
 }
-}
-//ylimäääräistä päättyy
 
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    Uusitesti2Theme {
+        LoginScreen()
+    }
+}
+
+
+
+
+/*
+private fun Context.doLogin() {
+    Toast.makeText(
+        this,
+        "Something went wrong, try again later!",
+        Toast.LENGTH_SHORT
+    ).show()
+}
 
 @Composable
 fun TextInput(
@@ -177,3 +164,4 @@ fun GreetingPreview() {
         //Greeting("Android")
     }
 }
+*/
